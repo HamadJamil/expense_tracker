@@ -1,10 +1,24 @@
-import 'package:expense_tracker/add_category_form.dart';
-import 'package:expense_tracker/custom_tile.dart';
+import 'package:expense_tracker/forms/add_category_form.dart';
+import 'package:expense_tracker/widgets/custom_tile.dart';
+import 'package:expense_tracker/screens/expense_screen.dart';
+import 'package:expense_tracker/local/provider/database_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<DatabaseProvider>().loadCategories();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +52,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(
-                      'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?_gl=1*7eok83*_ga*MzcwMTA3MjkyLjE3NDQ0MzE1MzU.*_ga_8JE65Q40S6*czE3NTI2NTcyNjckbzMkZzEkdDE3NTI2NTczMDEkajI2JGwwJGgw',
-                    ),
+                    backgroundImage: AssetImage('images/avatar.webp'),
                   ),
                   SizedBox(height: 8),
                   Text(
@@ -71,13 +83,16 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 4),
-                          Text(
-                            '5',
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Consumer<DatabaseProvider>(
+                            builder:
+                                (ctx, db, _) => Text(
+                                  db.categories.length.toString(),
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                           ),
                         ],
                       ),
@@ -121,18 +136,58 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          SliverList.builder(
-            itemCount: 10,
-            itemBuilder: (ctx, idx) {
-              return CustomTile(
-                title: 'Category $idx',
-                createdAt: '2023-10-01',
-                totalSpent: '1000',
-                emoji: '🍔',
-                onTap: () {},
-                onLongPress: () {},
-              );
-            },
+          Consumer<DatabaseProvider>(
+            builder:
+                (ctx, db, _) =>
+                    db.categories.isEmpty
+                        ? SliverFillRemaining(
+                          child: Center(
+                            child: Text('No Categories Added Yet!'),
+                          ),
+                        )
+                        : SliverList.builder(
+                          itemCount: db.categories.length,
+                          itemBuilder: (ctx, idx) {
+                            var category = db.categories[idx];
+                            db.getCategoryExpense(categoryId: category.id);
+                            return CustomTile(
+                              title: category.name,
+                              createdAt: category.createdAt,
+                              totalSpent: db.getExpense,
+                              emoji: category.emoji,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => ExpenseScreen(model: category),
+                                  ),
+                                );
+                              },
+                              onLongPress: () {
+                                showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) {
+                                    return Padding(
+                                      padding: EdgeInsets.only(
+                                        bottom:
+                                            MediaQuery.of(
+                                              context,
+                                            ).viewInsets.bottom,
+                                      ),
+                                      child: AddCategoryForm(
+                                        isUpdate: true,
+                                        id: category.id,
+                                        name: category.name,
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
           ),
         ],
       ),
@@ -140,9 +195,15 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           showModalBottomSheet(
+            isScrollControlled: true,
             context: context,
             builder: (context) {
-              return AddCategoryForm();
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: AddCategoryForm(),
+              );
             },
           );
         },

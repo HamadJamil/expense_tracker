@@ -1,5 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:expense_tracker/home_screen.dart';
+import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/local/provider/splash_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,16 +38,25 @@ class _SplashScreenState extends State<SplashScreen> {
           children: <Widget>[
             Text('Be', style: GoogleFonts.arOneSans(fontSize: 43.0)),
             SizedBox(
-              width: 190,
+              width: 230,
               child: DefaultTextStyle(
                 style: GoogleFonts.anton(fontSize: 40.0),
                 child: AnimatedTextKit(
-                  isRepeatingAnimation: true,
-                  repeatForever: true,
+                  isRepeatingAnimation: false,
+                  repeatForever: false,
                   animatedTexts: [
-                    RotateAnimatedText('ORGANISED'),
-                    RotateAnimatedText('SECURE'),
-                    RotateAnimatedText('INSIGHTFUL'),
+                    RotateAnimatedText(
+                      'ORGANISED',
+                      textStyle: GoogleFonts.anton(fontSize: 40),
+                    ),
+                    RotateAnimatedText(
+                      'SECURE',
+                      textStyle: GoogleFonts.anton(fontSize: 40),
+                    ),
+                    RotateAnimatedText(
+                      'INSIGHTFUL',
+                      textStyle: GoogleFonts.anton(fontSize: 40),
+                    ),
                   ],
                 ),
               ),

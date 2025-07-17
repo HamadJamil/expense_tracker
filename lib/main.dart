@@ -1,6 +1,7 @@
-import 'package:expense_tracker/home_screen.dart';
+import 'package:expense_tracker/screens/home_screen.dart';
+import 'package:expense_tracker/local/provider/database_provider.dart';
 import 'package:expense_tracker/local/provider/splash_provider.dart';
-import 'package:expense_tracker/splash_screen.dart';
+import 'package:expense_tracker/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,8 +14,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => SplashProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SplashProvider()),
+        ChangeNotifierProvider(create: (_) => DatabaseProvider()),
+      ],
       child: Builder(
         builder: (context) {
           return MaterialApp(
@@ -24,7 +28,7 @@ class MyApp extends StatelessWidget {
                     ? HomeScreen()
                     : SplashScreen(),
           );
-        }
+        },
       ),
     );
   }

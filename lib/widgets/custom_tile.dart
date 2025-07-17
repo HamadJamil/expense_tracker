@@ -1,4 +1,3 @@
-import 'package:expense_tracker/expense_screen.dart';
 import 'package:flutter/material.dart';
 
 class CustomTile extends StatelessWidget {
@@ -26,12 +25,7 @@ class CustomTile extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ExpenseScreen()),
-          );
-        },
+        onTap: onTap,
         onLongPress: onLongPress,
         tileColor: Colors.grey.shade300,
         leading: CircleAvatar(

@@ -4,14 +4,19 @@ import 'package:expense_tracker/model/expense_model.dart';
 import 'package:flutter/material.dart';
 
 class DatabaseProvider extends ChangeNotifier {
-  final DatabaseHelper _dbHelper = DatabaseHelper.getInstance;
+  final DatabaseHelper _dbHelper;
 
   List<CategoryModel> _categories = [];
   List<ExpenseModel> _expenses = [];
   String _emoji = '🍔';
+  String _expense = '0';
+
+  DatabaseProvider() : _dbHelper = DatabaseHelper.getInstance;
 
   List<CategoryModel> get categories => _categories;
   List<ExpenseModel> get expenses => _expenses;
+  String get getEmoji => _emoji;
+  String get getExpense => _expense;
 
   void setEmoji(String emoji) {
     _emoji = emoji;
@@ -93,5 +98,10 @@ class DatabaseProvider extends ChangeNotifier {
       await loadExpenses(categoryId);
     }
     return success;
+  }
+
+  Future<void> getCategoryExpense({required int categoryId}) async {
+    _expense =
+        await _dbHelper.getCategoryExpense(categoryId: categoryId) as String;
   }
 }

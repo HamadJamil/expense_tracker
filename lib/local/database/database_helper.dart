@@ -126,4 +126,14 @@ class DatabaseHelper {
     var db = await getDatabase();
     return await db.delete(eTableName, where: '$eId = $id') > 0;
   }
+
+  Future<int> getCategoryExpense({required int categoryId}) async {
+    var db = await getDatabase();
+    var list = await db.query(eTableName, where: '$eCategory = $categoryId');
+    var expense = 0;
+    for (var exp in list) {
+      expense += exp[eAmount] as int;
+    }
+    return expense;
+  }
 }
